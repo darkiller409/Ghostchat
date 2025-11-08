@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostChat v6.2 PRO - Cyber Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00ff00;
+            --primary-dark: #00cc00;
+            --secondary: #ff00ff;
+            --secondary-dark: #cc00cc;
+            --accent: #00ffff;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #050505;
+            --bg-card: #1a1a1a;
+            --border-glow: #00ff0033;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-muted: #888888;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Animations */
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary); }
+            50% { text-shadow: 0 0 20px var(--primary), 0 0 30px var(--primary); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 5px var(--primary); }
+            50% { box-shadow: 0 0 15px var(--primary), 0 0 25px var(--primary); }
+        }
+
+        .glow-text {
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* Containers */
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(10, 10, 10, 0.8);
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .header-left {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .menu-btn, .back-btn, .avatar-btn {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .menu-btn:hover, .back-btn:hover, .avatar-btn:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            min-height: 100vh;
+        }
+
+        .login-card {
+            background: rgba(26, 26, 26, 0.9);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 0 20px var(--primary);
+            backdrop-filter: blur(10px);
+        }
+
+        .login-title {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .login-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .login-tab {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--text-primary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .login-tab.active {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--primary);
+            color: var(--text-primary);
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-dark);
+            box-shadow: 0 0 20px var(--secondary);
+        }
+
+        /* Chat Lobby */
+        .lobby-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--primary);
+            color: var(--text-primary);
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .chats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .chat-card {
+            background: rgba(26, 26, 26, 0.8);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .chat-card:hover {
+            background: rgba(26, 26, 26, 0.95);
+            box-shadow: 0 0 20px var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .chat-card h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .chat-info {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-actions button {
+            flex: 1;
+            padding: 8px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-actions button:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Floating Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--secondary);
+            border: 2px solid var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--secondary);
+            transition: all 0.3s ease;
+            z-index: 99;
+            color: #fff;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--secondary);
+        }
+
+        .fab-menu {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 98;
+        }
+
+        .fab-item {
+            background: var(--secondary);
+            border: 1px solid var(--secondary);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--secondary);
+            transition: all 0.3s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .fab-item:hover {
+            box-shadow: 0 0 25px var(--secondary);
+        }
+
+        /* Drawer/Menu */
+        .drawer {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(10, 10, 10, 0.95);
+            border-right: 2px solid var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+            z-index: 200;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+        }
+
+        .drawer.open {
+            left: 0;
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 150;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .drawer.open ~ .drawer-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .drawer-header {
+            padding: 20px;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-close {
+            background: var(--primary);
+            border: none;
+            color: #000;
+            font-size: 20px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            border-radius: 3px;
+        }
+
+        .drawer-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .drawer-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+            color: var(--primary);
+            padding-left: 25px;
+        }
+
+        /* Avatar Selection */
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .avatar-option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            aspect-ratio: 1;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            font-size: 40px;
+            cursor: pointer;
+            background: rgba(0, 255, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-option:hover {
+            background: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        .avatar-option.selected {
+            background: var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        /* Chat Interface */
+        .chat-interface {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .message.own {
+            justify-content: flex-end;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: rgba(0, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            max-width: 70%;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .message-name {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .message-text {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--primary);
+            padding: 12px;
+            border-radius: 8px;
+            word-wrap: break-word;
+            border-left: 3px solid var(--primary);
+        }
+
+        .message.own .message-text {
+            background: rgba(255, 0, 255, 0.1);
+            border-color: var(--secondary);
+            border-left-color: var(--secondary);
+        }
+
+        /* Input Bar */
+        .input-container {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            background: rgba(10, 10, 10, 0.9);
+            border-top: 2px solid var(--primary);
+            position: sticky;
+            bottom: 0;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            align-items: center;
+        }
+
+        .input-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--primary);
+            background: rgba(0, 255, 0, 0.1);
+            color: var(--primary);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .input-btn:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--primary);
+            color: var(--text-primary);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 300;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(26, 26, 26, 0.95);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 30px var(--primary);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--primary);
+            border: none;
+            color: #000;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Settings */
+        .settings-section {
+            margin-bottom: 30px;
+        }
+
+        .settings-title {
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--text-primary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-btn.active {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        /* Admin Panel */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid var(--primary);
+        }
+
+        .admin-table th {
+            background: rgba(0, 255, 0, 0.1);
+            color: var(--primary);
+        }
+
+        .admin-table tr:hover {
+            background: rgba(0, 255, 0, 0.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .fab {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+
+            .drawer {
+                width: 250px;
+            }
+
+            .avatar-grid {
+                grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--primary);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="fade-in">
+            <div class="login-screen">
+                <div class="login-card">
+                    <div class="login-title">GhostChat</div>
+                    
+                    <div class="login-tabs">
+                        <div class="login-tab active" onclick="switchTab('login')">Login</div>
+                        <div class="login-tab" onclick="switchTab('register')">Register</div>
+                        <div class="login-tab" onclick="switchTab('guest')">Guest</div>
+                    </div>
+
+                    <!-- Login Tab -->
+                    <div id="loginTab">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="loginUsername" placeholder="Enter username" maxlength="30">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="loginPassword" placeholder="Enter password" maxlength="50">
+                        </div>
+                        <button class="btn" onclick="login()">Login</button>
+                        <div style="text-align: center; margin-top: 15px; font-size: 12px; color: var(--text-muted);">
+                            Admin: admin / password123
+                        </div>
+                    </div>
+
+                    <!-- Register Tab -->
+                    <div id="registerTab" class="hidden">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="registerUsername" placeholder="Create username" maxlength="30">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="registerPassword" placeholder="Create password" maxlength="50">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm Password</label>
+                            <input type="password" id="registerConfirm" placeholder="Confirm password" maxlength="50">
+                        </div>
+                        <button class="btn" onclick="register()">Register</button>
+                    </div>
+
+                    <!-- Guest Tab -->
+                    <div id="guestTab" class="hidden">
+                        <div class="form-group">
+                            <label>Guest Username</label>
+                            <input type="text" id="guestUsername" placeholder="Enter guest name" maxlength="30">
+                        </div>
+                        <button class="btn" onclick="loginGuest()">Enter as Guest</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avatar Selection Screen -->
+        <div id="avatarScreen" class="hidden">
+            <div class="header">
+                <div class="header-title">Choose Your Avatar</div>
+                <button class="btn" onclick="skipAvatar()" style="width: auto;">Skip</button>
+            </div>
+            <div class="main-content">
+                <div style="text-align: center; margin-bottom: 30px; color: var(--text-secondary);">
+                    Select an emoji avatar or skip to use default
+                </div>
+                <div class="avatar-grid" id="avatarGrid"></div>
+                <button class="btn" onclick="confirmAvatar()" style="margin-top: 30px; max-width: 300px; margin-left: auto; margin-right: auto; display: block;">
+                    Confirm Avatar
+                </button>
+            </div>
+        </div>
+
+        <!-- Main App (Chat Lobby) -->
+        <div id="mainApp" class="hidden">
+            <div class="header">
+                <div class="header-left">
+                    <button class="menu-btn" onclick="toggleDrawer()">☰</button>
+                    <div class="header-title">GhostChat v6.2</div>
+                </div>
+                <div class="header-right">
+                    <button class="avatar-btn" onclick="openProfile()" id="userAvatar">👤</button>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="lobby-container">
+                    <div class="search-container">
+                        <div class="search-bar">
+                            <input type="text" id="searchInput" placeholder="Search chats..." onkeyup="searchChats()">
+                        </div>
+                    </div>
+
+                    <div id="chatsContainer" class="chats-grid"></div>
+
+                    <div id="emptyState" class="empty-state hidden">
+                        <div class="empty-state-icon">💬</div>
+                        <div>No chats yet. Create one using the + button!</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAB Button -->
+            <button class="fab" onclick="toggleFab()">+</button>
+
+            <!-- FAB Menu -->
+            <div class="fab-menu hidden" id="fabMenu">
+                <div class="fab-item" onclick="openCreateChatModal()">Create Chat</div>
+                <div class="fab-item" onclick="openJoinChatModal()">Join Chat</div>
+            </div>
+        </div>
+
+        <!-- Chat Interface -->
+        <div id="chatInterface" class="hidden">
+            <div class="header">
+                <div class="header-left">
+                    <button class="back-btn" onclick="backToLobby()">← Back</button>
+                    <div class="header-title" id="chatTitle">Chat Room</div>
+                </div>
+                <div class="header-right">
+                    <button class="menu-btn" onclick="leaveChatRoom()">Leave</button>
+                </div>
+            </div>
+
+            <div class="chat-interface">
+                <div class="messages-container" id="messagesContainer"></div>
+                
+                <div class="input-container">
+                    <div class="input-group">
+                        <button class="input-btn" onclick="openEmojiPicker()">😊</button>
+                        <input type="text" class="message-input" id="messageInput" placeholder="Type message..." maxlength="500" onkeypress="handleMessageKeypress(event)">
+                        <button class="input-btn" onclick="openFilePicker()">📎</button>
+                        <button class="input-btn" onclick="sendMessage()">⬆️</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Drawer Menu -->
+        <div class="drawer" id="drawer">
+            <div class="drawer-header">
+                <span>Menu</span>
+                <button class="drawer-close" onclick="toggleDrawer()">✕</button>
+            </div>
+            <div class="drawer-item" onclick="openProfile()">👤 Profile</div>
+            <div class="drawer-item" onclick="openSettings()">⚙️ Settings</div>
+            <div class="drawer-item" onclick="openManageChats()">📋 Manage Chats</div>
+            <div class="drawer-item" id="adminItem" class="hidden" onclick="openAdminPanel()">👑 Admin Panel</div>
+            <div class="drawer-item" onclick="logout()">🚪 Logout</div>
+        </div>
+        <div class="drawer-overlay" onclick="toggleDrawer()"></div>
+
+        <!-- Modals -->
+        <!-- Profile Modal -->
+        <div class="modal" id="profileModal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+                <div class="modal-header">Profile</div>
+                
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="font-size: 80px; margin-bottom: 15px;" id="profileAvatar">👤</div>
+                    <div style="color: var(--primary); font-size: 18px; margin-bottom: 5px;" id="profileUsername">User</div>
+                    <div style="color: var(--text-secondary); font-size: 12px;" id="profileRole">User</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Change Username</label>
+                    <input type="text" id="profileUsernameInput" placeholder="New username" maxlength="30">
+                    <button class="btn" onclick="updateUsername()" style="margin-top: 10px;">Update</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Change Password</label>
+                    <input type="password" id="profilePasswordInput" placeholder="New password" maxlength="50">
+                    <button class="btn" onclick="updatePassword()" style="margin-top: 10px;">Update</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Change Avatar</label>
+                    <div class="avatar-grid" id="profileAvatarGrid" style="grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));"></div>
+                    <button class="btn" onclick="updateAvatar()" style="margin-top: 10px;">Update Avatar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
+                <div class="modal-header">Settings</div>
+                
+                <div class="settings-section">
+                    <div class="settings-title">Theme</div>
+                    <div class="theme-selector">
+                        <button class="theme-btn active" onclick="setTheme('cyber')">Cyber</button>
+                        <button class="theme-btn" onclick="setTheme('light')">Light</button>
+                        <button class="theme-btn" onclick="setTheme('dark')">Dark</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">Account</div>
+                    <button class="btn btn-secondary" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Chats Modal -->
+        <div class="modal" id="manageChatsModal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal('manageChatsModal')">✕</button>
+                <div class="modal-header">Manage Chats</div>
+                
+                <div id="manageChatsContainer"></div>
+            </div>
+        </div>
+
+        <!-- Create Chat Modal -->
+        <div class="modal" id="createChatModal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal('createChatModal')">✕</button>
+                <div class="modal-header">Create Chat Room</div>
+                
+                <div class="form-group">
+                    <label>Chat Name</label>
+                    <input type="text" id="createChatName" placeholder="Enter chat name" maxlength="50">
+                </div>
+
+                <button class="btn" onclick="createChat()">Create</button>
+            </div>
+        </div>
+
+        <!-- Join Chat Modal -->
+        <div class="modal" id="joinChatModal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal('joinChatModal')">✕</button>
+                <div class="modal-header">Join Chat Room</div>
+                
+                <div class="form-group">
+                    <label>Chat Code</label>
+                    <input type="text" id="joinChatCode" placeholder="Enter chat code" maxlength="20">
+                </div>
+
+                <button class="btn" onclick="joinChat()">Join</button>
+            </div>
+        </div>
+
+        <!-- Admin Panel Modal -->
+        <div class="modal" id="adminModal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal('adminModal')">✕</button>
+                <div class="modal-header">Admin Panel</div>
+                
+                <div style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Total Users: <span id="adminUserCount" style="color: var(--primary);">0</span>
+                </div>
+
+                <div id="adminUsersContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // Data & State Management
+        // ============================================
+        
+        let currentUser = null;
+        let currentChat = null;
+        let allChats = [];
+        let allUsers = [];
+        let selectedAvatar = null;
+        let selectedProfileAvatar = null;
+        const avatars = ['😺', '🐱', '🐯', '🦁', '🐶', '🐕', '🦊', '🐻', '🐼', '🐨', '🐭', '🐹', '🐰', '🦝', '🐸', '🦜'];
+
+        // ============================================
+        // LocalStorage Management
+        // ============================================
+
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('ghostchat_users') || '[]');
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('ghostchat_users', JSON.stringify(users));
+        }
+
+        function getChats() {
+            return JSON.parse(localStorage.getItem('ghostchat_chats') || '[]');
+        }
+
+        function saveChats(chats) {
+            localStorage.setItem('ghostchat_chats', JSON.stringify(chats));
+        }
+
+        function getCurrentUser() {
+            return JSON.parse(sessionStorage.getItem('currentUser'));
+        }
+
+        function setCurrentUser(user) {
+            sessionStorage.setItem('currentUser', JSON.stringify(user));
+        }
+
+        // ============================================
+        // Authentication
+        // ============================================
+
+        function switchTab(tab) {
+            document.querySelectorAll('[id$="Tab"]').forEach(t => t.classList.add('hidden'));
+            document.getElementById(tab + 'Tab').classList.remove('hidden');
+            
+            document.querySelectorAll('.login-tab').forEach((t, i) => {
+                t.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                alert('Please enter username and password');
+                return;
+            }
+
+            const users = getUsers();
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (!user) {
+                alert('Invalid credentials');
+                return;
+            }
+
+            currentUser = user;
+            setCurrentUser(user);
+            showAvatarScreen();
+        }
+
+        function register() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerConfirm').value;
+
+            if (!username || !password || !confirm) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            if (password !== confirm) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            const users = getUsers();
+            if (users.find(u => u.username === username)) {
+                alert('Username already exists');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                username: username,
+                password: password,
+                avatar: '👤',
+                role: 'user',
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            saveUsers(users);
+            
+            currentUser = newUser;
+            setCurrentUser(newUser);
+            alert('Registration successful!');
+            showAvatarScreen();
+        }
+
+        function loginGuest() {
+            const username = document.getElementById('guestUsername').value.trim();
+
+            if (!username) {
+                alert('Please enter a guest name');
+                return;
+            }
+
+            currentUser = {
+                id: 'guest_' + Date.now(),
+                username: username,
+                password: null,
+                avatar: '👤',
+                role: 'guest',
+                createdAt: new Date().toISOString()
+            };
+
+            setCurrentUser(currentUser);
+            showAvatarScreen();
+        }
+
+        // ============================================
+        // Avatar Selection
+        // ============================================
+
+        function showAvatarScreen() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('avatarScreen').classList.remove('hidden');
+            loadAvatarGrid();
+        }
+
+        function loadAvatarGrid() {
+            const grid = document.getElementById('avatarGrid');
+            grid.innerHTML = '';
+
+            avatars.forEach(avatar => {
+                const option = document.createElement('div');
+                option.className = 'avatar-option';
+                option.textContent = avatar;
+                option.onclick = () => selectAvatar(avatar, option);
+                grid.appendChild(option);
+            });
+
+            // Also load profile avatar grid
+            const profileGrid = document.getElementById('profileAvatarGrid');
+            profileGrid.innerHTML = '';
+
+            avatars.forEach(avatar => {
+                const option = document.createElement('div');
+                option.className = 'avatar-option';
+                option.textContent = avatar;
+                option.onclick = () => selectProfileAvatar(avatar, option);
+                profileGrid.appendChild(option);
+            });
+        }
+
+        function selectAvatar(avatar, element) {
+            document.querySelectorAll('.avatar-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedAvatar = avatar;
+        }
+
+        function selectProfileAvatar(avatar, element) {
+            document.querySelectorAll('#profileAvatarGrid .avatar-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedProfileAvatar = avatar;
+        }
+
+        function confirmAvatar() {
+            if (selectedAvatar) {
+                currentUser.avatar = selectedAvatar;
+                setCurrentUser(currentUser);
+                
+                // Save/update user in storage
+                if (currentUser.role !== 'guest') {
+                    const users = getUsers();
+                    const userIndex = users.findIndex(u => u.id === currentUser.id);
+                    if (userIndex !== -1) {
+                        users[userIndex] = currentUser;
+                        saveUsers(users);
+                    }
+                }
+                
+                showMainApp();
+            }
+        }
+
+        function skipAvatar() {
+            confirmAvatar();
+        }
+
+        // ============================================
+        // Main App Navigation
+        // ============================================
+
+        function showMainApp() {
+            document.getElementById('avatarScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('chatInterface').classList.add('hidden');
+            
+            updateHeader();
+            loadChats();
+        }
+
+        function updateHeader() {
+            const user = getCurrentUser();
+            if (user) {
+                document.getElementById('userAvatar').textContent = user.avatar;
+                
+                // Check if admin
+                if (user.role === 'admin') {
+                    document.getElementById('adminItem').classList.remove('hidden');
+                } else {
+                    document.getElementById('adminItem').classList.add('hidden');
+                }
+            }
+        }
+
+        // ============================================
+        // Chat Management
+        // ============================================
+
+        function loadChats() {
+            const user = getCurrentUser();
+            allChats = getChats();
+            const userChats = allChats.filter(chat => 
+                chat.members.includes(user.id) || chat.createdBy === user.id
+            );
+
+            renderChats(userChats);
+        }
+
+        function renderChats(chatsToRender) {
+            const container = document.getElementById('chatsContainer');
+            container.innerHTML = '';
+
+            if (chatsToRender.length === 0) {
+                document.getElementById('emptyState').classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('emptyState').classList.add('hidden');
+
+            chatsToRender.forEach(chat => {
+                const card = document.createElement('div');
+                card.className = 'chat-card fade-in';
+                card.innerHTML = `
+                    <h3>${chat.name}</h3>
+                    <div class="chat-info">
+                        <div>Code: <strong>${chat.code}</strong></div>
+                        <div>Messages: ${(chat.messages || []).length}</div>
+                        <div>Members: ${chat.members.length}</div>
+                    </div>
+                    <div class="chat-actions">
+                        <button onclick="enterChat('${chat.id}')">Open</button>
+                        <button onclick="deleteChat('${chat.id}')">Delete</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function searchChats() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const user = getCurrentUser();
+            const userChats = allChats.filter(chat => 
+                (chat.members.includes(user.id) || chat.createdBy === user.id) &&
+                (chat.name.toLowerCase().includes(query) || chat.code.includes(query))
+            );
+            renderChats(userChats);
+        }
+
+        function openCreateChatModal() {
+            toggleFab();
+            document.getElementById('createChatModal').classList.add('active');
+        }
+
+        function openJoinChatModal() {
+            toggleFab();
+            document.getElementById('joinChatModal').classList.add('active');
+        }
+
+        function createChat() {
+            const name = document.getElementById('createChatName').value.trim();
+            if (!name) {
+                alert('Please enter chat name');
+                return;
+            }
+
+            const user = getCurrentUser();
+            const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+            const chat = {
+                id: Date.now().toString(),
+                name: name,
+                code: code,
+                createdBy: user.id,
+                members: [user.id],
+                messages: [],
+                createdAt: new Date().toISOString()
+            };
+
+            allChats.push(chat);
+            saveChats(allChats);
+            closeModal('createChatModal');
+            loadChats();
+            alert('Chat created with code: ' + code);
+        }
+
+        function joinChat() {
+            const code = document.getElementById('joinChatCode').value.trim().toUpperCase();
+            if (!code) {
+                alert('Please enter chat code');
+                return;
+            }
+
+            const chat = allChats.find(c => c.code === code);
+            if (!chat) {
+                alert('Chat not found');
+                return;
+            }
+
+            const user = getCurrentUser();
+            if (!chat.members.includes(user.id)) {
+                chat.members.push(user.id);
+                saveChats(allChats);
+            }
+
+            closeModal('joinChatModal');
+            loadChats();
+            alert('Joined chat: ' + chat.name);
+        }
+
+        function enterChat(chatId) {
+            currentChat = allChats.find(c => c.id === chatId);
+            if (!currentChat) {
+                alert('Chat not found');
+                return;
+            }
+
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('chatInterface').classList.remove('hidden');
+            document.getElementById('chatTitle').textContent = currentChat.name;
+            
+            loadMessages();
+        }
+
+        function backToLobby() {
+            currentChat = null;
+            document.getElementById('chatInterface').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            loadChats();
+        }
+
+        function leaveChatRoom() {
+            if (currentChat) {
+                const user = getCurrentUser();
+                const chatIndex = allChats.findIndex(c => c.id === currentChat.id);
+                if (chatIndex !== -1) {
+                    allChats[chatIndex].members = allChats[chatIndex].members.filter(m => m !== user.id);
+                    saveChats(allChats);
+                }
+                backToLobby();
+            }
+        }
+
+        function deleteChat(chatId) {
+            if (confirm('Delete this chat?')) {
+                const user = getCurrentUser();
+                const chat = allChats.find(c => c.id === chatId);
+                if (chat && chat.createdBy === user.id) {
+                    allChats = allChats.filter(c => c.id !== chatId);
+                    saveChats(allChats);
+                    loadChats();
+                } else {
+                    alert('Only chat creator can delete');
+                }
+            }
+        }
+
+        // ============================================
+        // Chat Messages
+        // ============================================
+
+        function loadMessages() {
+            const container = document.getElementById('messagesContainer');
+            container.innerHTML = '';
+
+            const messages = currentChat.messages || [];
+            messages.forEach(msg => {
+                const user = getCurrentUser();
+                const messageEl = document.createElement('div');
+                messageEl.className = 'message ' + (msg.userId === user.id ? 'own' : '');
+                messageEl.innerHTML = `
+                    <div class="message-avatar">${msg.avatar}</div>
+                    <div class="message-content">
+                        <div class="message-name">${msg.username}</div>
+                        <div class="message-text">${msg.text}</div>
+                    </div>
+                `;
+                container.appendChild(messageEl);
+            });
+
+            // Auto-scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            const user = getCurrentUser();
+            const message = {
+                id: Date.now(),
+                userId: user.id,
+                username: user.username,
+                avatar: user.avatar,
+                text: text,
+                timestamp: new Date().toISOString()
+            };
+
+            currentChat.messages = currentChat.messages || [];
+            currentChat.messages.push(message);
+            
+            const chatIndex = allChats.findIndex(c => c.id === currentChat.id);
+            if (chatIndex !== -1) {
+                allChats[chatIndex] = currentChat;
+                saveChats(allChats);
+            }
+
+            input.value = '';
+            loadMessages();
+        }
+
+        function handleMessageKeypress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // ============================================
+        // UI Controls
+        // ============================================
+
+        function toggleDrawer() {
+            const drawer = document.getElementById('drawer');
+            const overlay = document.querySelector('.drawer-overlay');
+            
+            drawer.classList.toggle('open');
+        }
+
+        function toggleFab() {
+            document.getElementById('fabMenu').classList.toggle('hidden');
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function openProfile() {
+            toggleDrawer();
+            const user = getCurrentUser();
+            document.getElementById('profileUsername').textContent = user.username;
+            document.getElementById('profileAvatar').textContent = user.avatar;
+            document.getElementById('profileRole').textContent = user.role.toUpperCase();
+            openModal('profileModal');
+        }
+
+        function openSettings() {
+            toggleDrawer();
+            openModal('settingsModal');
+        }
+
+        function openManageChats() {
+            toggleDrawer();
+            loadManageChats();
+            openModal('manageChatsModal');
+        }
+
+        function openAdminPanel() {
+            toggleDrawer();
+            loadAdminPanel();
+            openModal('adminModal');
+        }
+
+        function loadManageChats() {
+            const user = getCurrentUser();
+            const userChats = allChats.filter(chat => chat.createdBy === user.id);
+            
+            const container = document.getElementById('manageChatsContainer');
+            container.innerHTML = '';
+
+            if (userChats.length === 0) {
+                container.innerHTML = '<div class="empty-state">No chats created</div>';
+                return;
+            }
+
+            userChats.forEach(chat => {
+                const item = document.createElement('div');
+                item.className = 'settings-item';
+                item.innerHTML = `
+                    <div>
+                        <div style="color: var(--primary); margin-bottom: 5px;">${chat.name}</div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">Code: ${chat.code} | ${chat.messages.length} messages</div>
+                    </div>
+                    <button class="btn" style="width: auto;" onclick="deleteChat('${chat.id}')">Delete</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function loadAdminPanel() {
+            allUsers = getUsers();
+            document.getElementById('adminUserCount').textContent = allUsers.length;
+
+            const container = document.getElementById('adminUsersContainer');
+            container.innerHTML = '';
+
+            allUsers.forEach(user => {
+                const userChats = allChats.filter(c => c.createdBy === user.id);
+                const item = document.createElement('div');
+                item.style.marginBottom = '20px';
+                item.innerHTML = `
+                    <div style="color: var(--primary); margin-bottom: 10px;">
+                        ${user.avatar} ${user.username}
+                    </div>
+                    <div style="color: var(--text-secondary); margin-bottom: 10px;">
+                        Created: ${userChats.length} chats | Role: ${user.role}
+                    </div>
+                    <div style="background: rgba(0,255,0,0.05); padding: 10px; border-radius: 5px; border: 1px solid var(--primary); font-size: 12px;">
+                        ${userChats.length > 0 ? userChats.map(c => `${c.name} (${c.messages.length} msgs)`).join(', ') : 'No chats'}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updateUsername() {
+            const newUsername = document.getElementById('profileUsernameInput').value.trim();
+            if (!newUsername) {
+                alert('Please enter new username');
+                return;
+            }
+
+            const users = getUsers();
+            if (users.find(u => u.username === newUsername && u.id !== currentUser.id)) {
+                alert('Username already exists');
+                return;
+            }
+
+            currentUser.username = newUsername;
+            setCurrentUser(currentUser);
+            
+            if (currentUser.role !== 'guest') {
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                if (userIndex !== -1) {
+                    users[userIndex] = currentUser;
+                    saveUsers(users);
+                }
+            }
+
+            document.getElementById('profileUsername').textContent = newUsername;
+            document.getElementById('profileUsernameInput').value = '';
+            alert('Username updated!');
+        }
+
+        function updatePassword() {
+            const newPassword = document.getElementById('profilePasswordInput').value;
+            if (!newPassword) {
+                alert('Please enter new password');
+                return;
+            }
+
+            currentUser.password = newPassword;
+            setCurrentUser(currentUser);
+
+            if (currentUser.role !== 'guest') {
+                const users = getUsers();
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                if (userIndex !== -1) {
+                    users[userIndex] = currentUser;
+                    saveUsers(users);
+                }
+            }
+
+            document.getElementById('profilePasswordInput').value = '';
+            alert('Password updated!');
+        }
+
+        function updateAvatar() {
+            if (!selectedProfileAvatar) {
+                alert('Please select an avatar');
+                return;
+            }
+
+            currentUser.avatar = selectedProfileAvatar;
+            setCurrentUser(currentUser);
+
+            if (currentUser.role !== 'guest') {
+                const users = getUsers();
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                if (userIndex !== -1) {
+                    users[userIndex] = currentUser;
+                    saveUsers(users);
+                }
+            }
+
+            updateHeader();
+            document.getElementById('profileAvatar').textContent = selectedProfileAvatar;
+            alert('Avatar updated!');
+        }
+
+        function setTheme(theme) {
+            localStorage.setItem('ghostchat_theme', theme);
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Apply theme
+            applyTheme(theme);
+        }
+
+        function applyTheme(theme) {
+            const root = document.documentElement.style;
+            if (theme === 'light') {
+                root.setProperty('--bg-dark', '#f5f5f5');
+                root.setProperty('--bg-darker', '#ffffff');
+                root.setProperty('--bg-card', '#e8e8e8');
+                root.setProperty('--text-primary', '#000000');
+                root.setProperty('--text-secondary', '#333333');
+                root.setProperty('--primary', '#00cc00');
+            } else if (theme === 'dark') {
+                root.setProperty('--bg-dark', '#1a1a1a');
+                root.setProperty('--bg-darker', '#0d0d0d');
+                root.setProperty('--bg-card', '#2a2a2a');
+                root.setProperty('--primary', '#888888');
+            }
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            location.reload();
+        }
+
+        // Placeholder functions for future implementation
+        function openEmojiPicker() {
+            alert('Emoji picker - coming soon!');
+        }
+
+        function openFilePicker() {
+            alert('File upload - coming soon!');
+        }
+
+        // ============================================
+        // Initialization
+        // ============================================
+
+        // Initialize demo data if empty
+        function initializeDemoData() {
+            const users = getUsers();
+            if (users.length === 0) {
+                const demoUsers = [
+                    { id: 1, username: 'admin', password: 'password123', avatar: '👑', role: 'admin', createdAt: new Date().toISOString() }
+                ];
+                saveUsers(demoUsers);
+            }
+        }
+
+        // Run on page load
+        window.addEventListener('load', () => {
+            initializeDemoData();
+        });
+    </script>
+</body>
+</html>
